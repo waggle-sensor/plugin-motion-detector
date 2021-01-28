@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 
+# Detectors should satisfy the interface:
+# detector.apply(frame) -> object list
 
 class EMAObjectDetector:
 
