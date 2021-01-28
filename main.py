@@ -27,7 +27,7 @@ def main():
     try:
         while True:
             logging.info("getting frame")
-            frame = frames.get()
+            frame = frames.get(timeout=10.0)
 
             logging.info("applying detector")
             objects = detector.apply(frame)
