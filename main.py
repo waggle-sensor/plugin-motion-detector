@@ -7,6 +7,7 @@ from detectors import EMAObjectDetector, BGSubObjectDetector
 
 def main():
     parser = argparse.ArgumentParser(description="This program uses simple motion detection and background subtraction for object detection.")
+    parser.add_argument("--input", default=0, help="video input source")
     parser.add_argument("--display", action="store_true", help="display object detection preview")
     args = parser.parse_args()
 
@@ -21,7 +22,7 @@ def main():
     # detector = BGSubObjectDetector(cv2.createBackgroundSubtractorKNN())
     detector = EMAObjectDetector(0.7)
 
-    frames = create_video_capture_queue("test.mp4")
+    frames = create_video_capture_queue(args.input)
 
     try:
         while True:
