@@ -26,10 +26,16 @@ def main():
 
     try:
         while True:
+            logging.info("getting frame")
             frame = frames.get()
+
+            logging.info("applying detector")
             objects = detector.apply(frame)
+
             for x, y, w, h in objects:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+                logging.info("object in x=%s y=%s w=%s h=%s", x, y, w, h)
+
             if args.display:
                 cv2.imshow("Preview", frame)
                 keyboard = cv2.waitKey(1) & 0xFF
