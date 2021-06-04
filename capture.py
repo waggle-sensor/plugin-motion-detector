@@ -11,6 +11,7 @@ def create_video_capture_queue(device, queue_size=30):
             ok, frame = capture.read()
             if not ok:
                 raise RuntimeError("failed to capture frame")
+            
             frames.put(frame)
 
     Thread(target=video_capture_worker, daemon=True).start()

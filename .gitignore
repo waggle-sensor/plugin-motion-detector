@@ -1,0 +1,11 @@
+# ignore python env:
+/env
+__pycache__/
+
+# ignore datasets:
+/datasets
+!/datasets/.gitkeep
+
+# ignore any testing artifacts:
+/test
+

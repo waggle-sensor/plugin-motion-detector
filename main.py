@@ -1,14 +1,17 @@
+#!/bin/env python3
+
 import argparse
 import time
 import logging
 import cv2
 from capture import create_video_capture_queue
-from detectors import EMAObjectDetector, BGSubObjectDetector
+from detectors import EMAObjectDetector, BGSubObjectDetector,DenseOpticalFlowDetector
 
 def main():
     parser = argparse.ArgumentParser(description="This program uses simple motion detection and background subtraction for object detection.")
-    parser.add_argument("--input", default=0, help="video input source")
+    parser.add_argument("--input", default="/dev/video0", help="video input source")
     parser.add_argument("--display", action="store_true", help="display object detection preview")
+    parser.add_argument("--filtered", action="store_true", help="display filtered input")
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -18,9 +21,10 @@ def main():
 
     logging.info("opencv version %s", cv2.__version__)
 
-    # detector = BGSubObjectDetector(cv2.createBackgroundSubtractorMOG2())
-    # detector = BGSubObjectDetector(cv2.createBackgroundSubtractorKNN())
-    detector = EMAObjectDetector(0.7)
+    #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorMOG2())
+    #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorKNN())
+    #detector = EMAObjectDetector(0.5)
+    detector = DenseOpticalFlowDetector()
 
     frames = create_video_capture_queue(args.input)
 
@@ -31,7 +35,10 @@ def main():
 
             logging.info("applying detector")
             objects = detector.apply(frame)
-
+            if args.filtered and (detector.filtered_frame is not None):
+                frame = detector.filtered_frame
+                #frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2RGB)
+            
             for x, y, w, h in objects:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 logging.info("object in x=%s y=%s w=%s h=%s", x, y, w, h)
