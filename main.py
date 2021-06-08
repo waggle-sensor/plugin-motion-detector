@@ -5,7 +5,8 @@ import time
 import logging
 import cv2
 from capture import create_video_capture_queue
-from detectors import EMAObjectDetector, BGSubObjectDetector,DenseOpticalFlowDetector
+from detector import EMAObjectDetector, BGSubObjectDetector,DenseOpticalFlowDetector
+from object_tracker import TrackedObjectDatabase, EMATracker
 
 def main():
     parser = argparse.ArgumentParser(description="This program uses simple motion detection and background subtraction for object detection.")
@@ -24,27 +25,27 @@ def main():
     #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorMOG2())
     #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorKNN())
     #detector = EMAObjectDetector(0.5)
-    detector = DenseOpticalFlowDetector()
+    detector = DenseOpticalFlowDetector(1)
+
+    tracker = EMATracker()
 
     frames = create_video_capture_queue(args.input)
+    tod = TrackedObjectDatabase(detector, tracker)
 
     try:
         while True:
-            logging.info("getting frame")
+            #logging.info("getting frame")
             frame = frames.get(timeout=10.0)
 
-            logging.info("applying detector")
-            objects = detector.apply(frame)
-            if args.filtered and (detector.filtered_frame is not None):
-                frame = detector.filtered_frame
-                #frame = cv2.cvtColor(frame,cv2.COLOR_GRAY2RGB)
-            
-            for x, y, w, h in objects:
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-                logging.info("object in x=%s y=%s w=%s h=%s", x, y, w, h)
+            #logging.info("applying tracker")
+            tod.update_tracked_objects(frame)
+            if args.filtered and (tod.detector.filtered_frame is not None):
+                frame = tod.detector.filtered_frame
+        
+            tod.show_tracked_objects(frame)
 
             if args.display:
-                cv2.imshow("Preview", frame)
+                cv2.imshow("Preview (press \'q\' to quit)", frame)
                 keyboard = cv2.waitKey(1) & 0xFF
                 if keyboard == ord("q") or keyboard == 27:
                     break

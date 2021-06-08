@@ -10,7 +10,7 @@ from time import sleep
 from multiprocessing import Pool
 
 # to display benchmark progress bar:
-import tqdm
+from tqdm import tqdm
 
 class TracknetDataset:
     
@@ -57,8 +57,8 @@ class TracknetDataset:
                 
             # display image sequence:
             frame = None
-            for (name, img), rect in zip(imgs_example, rects_example):
-                print(name)
+            for (name, img), rect in tqdm(zip(imgs_example, rects_example)):
+                #print(name)
                 x,y,w,h = tuple([int(x) for x in rect])
                 cv2.rectangle(img, (x,y), (x+w,y+h), (0,255,0),2)
                 cv2.imshow("Preview (press \'q\' to quit)",img)
@@ -112,9 +112,16 @@ def main():
     parser = argparse.ArgumentParser('This runs an object tracking benchmark against the TrackNet dataset')
     parser.add_argument('--dataset', required=True, help='Path to uncompressed TrackNet dataset (e.g. TRAIN_0)')
     args = parser.parse_args()
-
     tds = TracknetDataset(args.dataset)
-    tds.show_example()  
+
+    print('Number of videos: ', len(tds.data))
+    with open('./selections.txt','a') as selections:
+        for item in tds.data.keys():
+            tds.show_example(item)
+            ans = input(f'Add example {item} to selections (y/n)?')
+            if ans == 'y' or ans == 'Y':
+                selections.write(item + '\n')
+    
 
 if __name__ == '__main__':
     main()

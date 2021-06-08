@@ -7,11 +7,11 @@ import numpy as np
 
 class EMAObjectDetector:
     """
-        Detects objects via an exponential moving average in grayscale
-        color difference
+        Detects moving objects via an exponential moving average of color
+        intensity differences
 
     """
-    def __init__(self, weight):
+    def __init__(self, max_n_objs, weight):
         self.avg = None
         self.weight = weight
         self.filtered_frame = None
@@ -19,7 +19,7 @@ class EMAObjectDetector:
 
     def apply(self, frame):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (256, 256), 0)
+        gray = cv2.GaussianBlur(gray, (41, 41), 0)
         if self.avg is None:
             self.avg = gray
         else:
@@ -28,7 +28,7 @@ class EMAObjectDetector:
         _, thresh = cv2.threshold(delta, 10, 255, cv2.THRESH_BINARY)
         thresh = cv2.dilate(thresh, None, iterations=2)
         self.filtered_frame = thresh
-        return get_bounding_boxes_from_thresh(thresh, min_area=2000)
+        return get_bounding_boxes_from_thresh(thresh, 2000, max_n_objs)
     
     def reset(self):
         self.avg = None
@@ -36,10 +36,10 @@ class EMAObjectDetector:
 
 class BGSubObjectDetector:
     """
-        Detects objects via Background subtraction
+        Detects moving objects via background subtraction
     """
 
-    def __init__(self, bgsub):
+    def __init__(self, max_n_objs, bgsub):
         self.bgsub = bgsub
         self.filtered_frame = None
     
@@ -61,39 +61,57 @@ class DenseOpticalFlowDetector:
         Detects moving objects through optical flow
     """
     
-    def __init__(self):
+    def __init__(self, max_n_objs=4, r_mean=0.5, r_stddev=0.3, r_thresh=0.2):
         self.lastgray = None
+        self.max_n_objs = max_n_objs
+        self.r_mean = r_mean
+        self.r_stddev = r_stddev
+        self.r_thresh = r_thresh
         self.filtered_frame = None
 
     def apply(self, frame):
         frame = cv2.resize(frame, (0,0), fx=0.5, fy=0.5)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #gray = cv2.GaussianBlur(gray, (41, 41), 0)
         if self.lastgray is None:
             self.lastgray = gray
         flow = cv2.calcOpticalFlowFarneback(self.lastgray, gray, None,
-                                            0.2, 1, 12, 2, 2, 1.2, 0) 
+                                            0.5, # pyramid scale
+                                            3,   # levels 
+                                            32,  # window size
+                                            3,   # iterations
+                                            5,   # polynomial degree
+                                            1.2, # polynomial std. dev.
+                                            0) 
         r, theta = cv2.cartToPolar(flow[...,0], flow[...,1])
         hsv = np.zeros_like(frame)
         hsv[...,0] = theta * 180 / np.pi / 2
         hsv[...,1] = 255
-        hsv[...,2] = cv2.normalize(r, None, 0, 255, cv2.NORM_MINMAX)
+        hsv[...,2] = np.clip(255*(r-self.r_mean)/self.r_stddev, 0,255) 
         self.lastgray = gray
         flow_img = cv2.resize(cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR),(0,0),fx=2.0, fy=2.0)
-        self.filtered_frame = flow_img
-        
+
         gray_flow = cv2.cvtColor(flow_img,cv2.COLOR_BGR2GRAY)
-        _, flow_thresh = cv2.threshold(gray_flow, 100, 255, cv2.THRESH_BINARY)
-        flow_thresh= cv2.dilate(flow_thresh, None, iterations=2)
-        return get_bounding_boxes_from_thresh(flow_thresh, min_area=2000)
+        self.filtered_frame = flow_img
+        _, flow_thresh = cv2.threshold(gray_flow, 255*self.r_thresh, 255, cv2.THRESH_BINARY)
+        flow_thresh= cv2.dilate(flow_thresh, None, iterations=4)
+        #self.filtered_frame = flow_thresh
+        return get_bounding_boxes_from_thresh(flow_thresh, 2000, self.max_n_objs)
 
     def reset(self):
         self.lastgray = None
 
 
-def get_bounding_boxes_from_thresh(thresh, min_area):
+def get_bounding_boxes_from_thresh(thresh, min_area=2000, max_n_objs=5):
     cnts, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    return [cv2.boundingRect(c) for c in cnts if cv2.contourArea(c) > min_area]
+    cnt_list = sorted([
+        (cv2.boundingRect(c),cv2.contourArea(c)) 
+        for c in cnts ], 
+        key= lambda x : -x[1])
+    cnts = [ ca[0] for ca in cnt_list if ca[1] > min_area ]
+    cnts = cnts[:min(max_n_objs, len(cnts))]
+    return cnts
+
+
 
 # TODO can we bootstrap / parameter search for a lightweight motion tracker
 # via "transfer learning" of a powerful object detector? or at least generate
