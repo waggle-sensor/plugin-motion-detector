@@ -1,5 +1,6 @@
 import time
 from itertools import combinations
+import logging
 import cv2
 
 class TrackedObject:
@@ -39,21 +40,34 @@ class EMATracker:
         new_objs = []
 
         # update old objects:
-        for obj in objs:
+        for i, obj in enumerate(objs):
             new_rect = None 
             for rect in detected_rects:
                 if _rect_center_overlap(rect, obj.rect):
                     new_rect = rect if new_rect is None else _union_rect(rect, new_rect)
-                    seen = True
                     break
             if new_rect != None:
                 obj.rect = tuple(
                             int(self.weight*new_rect[i] + (1.0-self.weight)*obj.rect[i])
                             for i in range(4))
-                obj.last_seen = time.time()
-                new_objs.append(obj)
+                
+                # ensure object is not occluded by others:
+                occluded = False
+                for j, oth_obj in enumerate(objs[:i]):
+                    if _rect_center_overlap(oth_obj.rect, obj.rect):
+                        occluded = True
+                        break
+                if occluded:
+                    logging.info(f'Merged objects #{j+1} and #{i+1}')
+                else:
+                    obj.last_seen = time.time()
+                    new_objs.append(obj)
+            
+            # if the object is not in motion, wait for its ttl to expire:
             elif (time.time() - obj.last_seen) < self.object_ttl:
                 new_objs.append(obj)
+            else:
+                logging.info(f'Lost object #{i+1}')
         
         # discover new objects:
         for rect in detected_rects:
@@ -64,7 +78,7 @@ class EMATracker:
                     break
             if not has_obj:
                 new_objs.append(TrackedObject(rect))
-         
+
         objs[:] = new_objs
         
 class TrackedObjectDatabase:
@@ -81,7 +95,9 @@ class TrackedObjectDatabase:
         # (attempt to) track objects into the next frame:
         self.tracker.update_objs(self.tracked_objs, frame, detected_rects)
 
-    def show_tracked_objects(self, frame):
-        for obj in self.tracked_objs:
+    def show_tracked_objects(self, frame, count=True):
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        for i, obj in enumerate(self.tracked_objs):
             x,y,w,h = obj.rect
             cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2)
+            cv2.putText(frame, f'{i+1}', (x,y-20),font, 1, (0,0,255),2)

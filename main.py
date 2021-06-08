@@ -19,13 +19,12 @@ def main():
         level=logging.INFO,
         format="%(asctime)s %(message)s",
         datefmt="%Y/%m/%d %H:%M:%S")
-
     logging.info("opencv version %s", cv2.__version__)
 
     #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorMOG2())
     #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorKNN())
     #detector = EMAObjectDetector(0.5)
-    detector = DenseOpticalFlowDetector(1)
+    detector = DenseOpticalFlowDetector(4)
 
     tracker = EMATracker()
 

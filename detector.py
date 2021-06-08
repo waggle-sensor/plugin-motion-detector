@@ -82,6 +82,7 @@ class DenseOpticalFlowDetector:
                                             5,   # polynomial degree
                                             1.2, # polynomial std. dev.
                                             0) 
+        
         r, theta = cv2.cartToPolar(flow[...,0], flow[...,1])
         hsv = np.zeros_like(frame)
         hsv[...,0] = theta * 180 / np.pi / 2
