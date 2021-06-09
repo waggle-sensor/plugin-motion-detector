@@ -1,0 +1,6 @@
+# ignore any container startup scripts
+*.sh
+dataset/
+.*
+!.ipynb_checkpoints
+kitti_single/
