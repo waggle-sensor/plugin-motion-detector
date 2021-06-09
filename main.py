@@ -5,7 +5,7 @@ import time
 import logging
 import cv2
 from capture import create_video_capture_queue
-from detector import EMAObjectDetector, BGSubObjectDetector,DenseOpticalFlowDetector
+from detector import EMAObjectDetector, BGSubObjectDetector,DenseOpticalFlowDetector, YOLODetector
 from object_tracker import TrackedObjectDatabase, EMATracker
 
 def main():
@@ -24,7 +24,8 @@ def main():
     #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorMOG2())
     #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorKNN())
     #detector = EMAObjectDetector(0.5)
-    detector = DenseOpticalFlowDetector(4)
+    #detector = DenseOpticalFlowDetector(4)
+    detector = YOLODetector()
 
     tracker = EMATracker()
 
