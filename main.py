@@ -13,6 +13,7 @@ def main():
     parser.add_argument("--input", default="/dev/video0", help="video input source")
     parser.add_argument("--display", action="store_true", help="display object detection preview")
     parser.add_argument("--filtered", action="store_true", help="display filtered input")
+    parser.add_argument("--fps", type=float, default=None, help="frames per second of input source")
     args = parser.parse_args()
 
     logging.basicConfig(
@@ -29,7 +30,7 @@ def main():
 
     tracker = EMATracker()
 
-    frames = create_video_capture_queue(args.input)
+    frames = create_video_capture_queue(args.input, fps=args.fps)
     tod = TrackedObjectDatabase(detector, tracker)
 
     try:
