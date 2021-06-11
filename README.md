@@ -1,11 +1,42 @@
-## Dependencies
----------------
+# General Purpose Motion Detector
 
-The Python3 dependencies are:
+This is a general purpose motion detection plugin that incorporates various online moving object detectors, which can be paired with object trackers.
+
+### Object Detectors:
+* Background Subtraction (naive, Gaussian Mixture, and K-Nearest Neighbors methods)
+	* [[reference paper]](https://www.sciencedirect.com/science/article/abs/pii/S0167865505003521)
+* Farnebäck's Dense Optical Flow Method:
+	* [[reference paper]](https://www.researchgate.net/publication/225138825_Two-Frame_Motion_Estimation_Based_on_Polynomial_Expansion)
+
+* TinyYOLOv2 (trained on the [PASCAL VOC dataset](https://www.kaggle.com/gopalbhattrai/pascal-voc-2012-dataset))
+	* [[reference paper]](https://ieeexplore.ieee.org/document/7780460) 
+
+### Object Trackers:
+* Naive Exponential Moving Average Tracker
+
+## Developer Notes
+This plugin is still in development, and there are several features that are not yet implemented and/or may be removed. 
+
+Future changes may include:
+
+* Replace tensornets TinyYOLO model with custom trained Tensorflow lite model
+
+* Implement non-naive lightweight tracking models (e.g. [MOSSE filters](https://www.cs.colostate.edu/~draper/papers/bolme_cvpr10.pdf))
+
+* Reformatting project structure (to better align with existing plugins)
+
+* Add sage.yaml
+
+* Publishing objects via pywaggle 
+
+## Dependencies
+
+To run/test this plugin in a local Python3 environment, the required dependencies are:
 ```
-numpy         1.20.3
-opencv-python 4.5.2.52
-tqdm          4.61.0
+numpy
+tensorflow 
+tensornets
+opencv-contrib-python
 ```
 
 You can install each dependency by running ``pip3 install <dependency>``
