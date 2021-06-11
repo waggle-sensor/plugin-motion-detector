@@ -2,5 +2,6 @@
 *.sh
 dataset/
 .*
+weight.hdf5
 !.ipynb_checkpoints
 kitti_single/
