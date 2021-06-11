@@ -23,12 +23,12 @@ def main():
     logging.info("opencv version %s", cv2.__version__)
 
     #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorMOG2())
-    #detector = BGSubObjectDetector(cv2.createBackgroundSubtractorKNN())
+    #detector = BGSubObjectDetector(4,cv2.createBackgroundSubtractorKNN())
     #detector = EMAObjectDetector(0.5)
     #detector = DenseOpticalFlowDetector(4)
     detector = YOLODetector()
 
-    tracker = EMATracker()
+    tracker = EMATracker(1.0)
 
     frames = create_video_capture_queue(args.input, fps=args.fps)
     tod = TrackedObjectDatabase(detector, tracker)

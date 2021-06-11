@@ -1,0 +1,3 @@
+git+https://github.com/sagecontinuum/sage-cli.git
+git+https://github.com/waggle-sensor/pywaggle
+tensornets
