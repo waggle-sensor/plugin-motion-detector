@@ -8,4 +8,4 @@ __pycache__/
 
 # ignore any testing artifacts:
 /test
-
+.bash_history
