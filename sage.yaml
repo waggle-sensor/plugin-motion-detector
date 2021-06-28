@@ -1,0 +1,12 @@
+ame: "motion-detector"
+description: "A general-purpose motion detection system that locates and tracks moving objects."
+version: "0.1.0"
+source:
+  architectures:
+    - "linux/amd64"
+    - "linux/arm64"
+    - "linux/arm/v7"
+  url: "https://github.com/waggle-sensor/plugin-motion-detector"
+
+  testing:
+    command: [test.py]
