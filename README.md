@@ -15,9 +15,8 @@ This is a general purpose motion detection plugin that incorporates various onli
 * Naive Exponential Moving Average Tracker
 
 ## Developer Notes
-This plugin is still in development, and there are several features that xould be added in the future. 
-
-Future changes may include:
+This plugin is still in development, and there are several features that would be great to add in the future. 
+Some of these future changes may include:
 
 * Replace tensornets TinyYOLO model with custom trained Tensorflow lite model
 
