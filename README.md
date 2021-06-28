@@ -5,7 +5,7 @@ This is a general purpose motion detection plugin that incorporates various onli
 ### Object Detectors:
 * Background Subtraction (naive, Gaussian Mixture, and K-Nearest Neighbors methods)
 	* [[reference paper]](https://www.sciencedirect.com/science/article/abs/pii/S0167865505003521)
-* Farnebäck's Dense Optical Flow Method:
+* Farnebäck's Dense Optical Flow Method (recommended detector):
 	* [[reference paper]](https://www.researchgate.net/publication/225138825_Two-Frame_Motion_Estimation_Based_on_Polynomial_Expansion)
 
 * TinyYOLOv2 (trained on the [PASCAL VOC dataset](https://www.kaggle.com/gopalbhattrai/pascal-voc-2012-dataset))
@@ -15,7 +15,7 @@ This is a general purpose motion detection plugin that incorporates various onli
 * Naive Exponential Moving Average Tracker
 
 ## Developer Notes
-This plugin is still in development, and there are several features that are not yet implemented and/or may be removed. 
+This plugin is still in development, and there are several features that xould be added in the future. 
 
 Future changes may include:
 
@@ -24,10 +24,6 @@ Future changes may include:
 * Implement non-naive lightweight tracking models (e.g. [MOSSE filters](https://www.cs.colostate.edu/~draper/papers/bolme_cvpr10.pdf))
 
 * Reformatting project structure (to better align with existing plugins)
-
-* Add sage.yaml
-
-* Publishing objects via pywaggle 
 
 ## Dependencies
 
