@@ -24,5 +24,17 @@ ENV SAGE_STORE_URL=${SAGE_STORE_URL} \
     BUCKET_ID_MODEL=${BUCKET_ID_MODEL}
 
 # Establish entrypoint:
+# ----- Arguments -----
+#   input:      video source device
+#   fps:        captured frames per second
+#   interval:   minimum interval between data publishes (in seconds)
+#   detector:   detector method to be used (one of the following):
+#                   1. "bg_subtraction" (simple KNN background subtraction)
+#                   2. "dense_optflow"  (dense optical flow; recommended)
+#                   3. "yolo"           (small pre-trained YOLO model)
 WORKDIR /app
-ENTRYPOINT ["python3", "/app/main.py", "--input", "/dev/video0"]
+ENTRYPOINT ["python3",    "/app/main.py", \
+            "--input",    "/dev/video0", \
+            "--fps",      "20", \
+            "--interval", "1", \
+            "--detector", "dense_optflow"]

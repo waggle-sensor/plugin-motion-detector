@@ -6,15 +6,18 @@ import tensornets as nets
 # Detectors should satisfy the interface:
 #   detector.apply(frame) -> object list [ returns list of moving objects      ]
 #   detector.reset()                     [ resets the detector for a new scene ]
+#
+# Optionally, detectors may also have an attribute:
+#       <detector>.filtered_frame
+#  which should be updated within a call to the apply() function. This is set to some
+#  filtered representation of the frame, and can be shown (instead of the raw camera feed)
+#  when both the --display and --filtered flags are used.
 
 class EMAObjectDetector:
-    """
-        Detects moving objects via an exponential moving average of color
-        intensity differences
-
-    """
+    """Detects moving objects via an exponential moving average of color differences"""
     def __init__(self, max_n_objs, weight):
         self.avg = None
+        self.max_n_objs = max_n_objs
         self.weight = weight
         self.filtered_frame = None
 
@@ -30,19 +33,18 @@ class EMAObjectDetector:
         _, thresh = cv2.threshold(delta, 10, 255, cv2.THRESH_BINARY)
         thresh = cv2.dilate(thresh, None, iterations=2)
         self.filtered_frame = thresh
-        return get_bounding_boxes_from_thresh(thresh, 2000, max_n_objs)
+        return get_bounding_boxes_from_thresh(thresh, 2000, self.max_n_objs)
     
     def reset(self):
         self.avg = None
 
 
 class BGSubObjectDetector:
-    """
-        Detects moving objects via background subtraction
-    """
+    """Detects moving objects via background subtraction"""
 
     def __init__(self, max_n_objs, bgsub):
         self.bgsub = bgsub
+        self.max_n_objs = max_n_objs
         self.filtered_frame = None
     
     def apply(self, frame):
@@ -53,15 +55,13 @@ class BGSubObjectDetector:
         _, thresh = cv2.threshold(fg, 25, 255, cv2.THRESH_BINARY)
         thresh = cv2.dilate(thresh, None, iterations=2)
         self.filtered_frame = thresh
-        return get_bounding_boxes_from_thresh(thresh, min_area=2000)
+        return get_bounding_boxes_from_thresh(thresh, 2000, self.max_n_objs)
 
     def reset(self):
         pass
 
 class DenseOpticalFlowDetector:
-    """
-        Detects moving objects through optical flow
-    """
+    """Detects moving objects through optical flow"""
     
     def __init__(self, max_n_objs=4, r_mean=0.5, r_stddev=0.3, r_thresh=0.2):
         self.lastgray = None

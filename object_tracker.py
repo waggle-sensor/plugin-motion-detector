@@ -4,12 +4,14 @@ import logging
 import cv2
 
 class TrackedObject:
-    def __init__(self, rect):
+    def __init__(self, rect, label='object'):
+        self.label = label
         self.rect = rect
-        self.last_seen = time.time()
+        self.first_seen = time.time()
+        self.last_seen = self.first_seen
 
     def __str__(self):
-        return str(self.rect)
+        return f'{self.label} at: {str(self.rect)}'
 
 
 def _rect_overlap(rA, rB):
@@ -87,12 +89,9 @@ class TrackedObjectDatabase:
         self.detector = detector
         self.tracker = tracker
         self.tracked_objs = []
-
-
+    
     def update_tracked_objects(self, frame):
         detected_rects = self.detector.apply(frame)
-        
-        # (attempt to) track objects into the next frame:
         self.tracker.update_objs(self.tracked_objs, frame, detected_rects)
 
     def show_tracked_objects(self, frame, count=True):
@@ -101,3 +100,17 @@ class TrackedObjectDatabase:
             x,y,w,h = obj.rect
             cv2.rectangle(frame, (x,y), (x+w, y+h), (0,255,0), 2)
             cv2.putText(frame, f'{i+1}', (x,y-20),font, 1, (0,0,255),2)
+    
+    def get_tracked_objects_info(self, with_meta=False):
+        obj_dict = { 
+            str(id(obj)) : { 'label': obj.label, 'rect': obj.rect, 'last_seen': obj.last_seen } 
+            for obj in self.tracked_objs 
+        }
+        if with_meta:
+            obj_meta = { 
+                'detector': self.detector.__class__.__name__, 
+                'tracker': self.tracker.__class__.__name__
+            }
+            return obj_dict, obj_meta
+        
+        return obj_dict

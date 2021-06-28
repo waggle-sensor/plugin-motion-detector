@@ -3,7 +3,7 @@ from queue import Queue
 import time
 import cv2
 
-def create_video_capture_queue(device, queue_size=30, fps=None):
+def create_video_capture_queue(device, queue_size=30, fps=None, quiet=False):
     frames = Queue(queue_size)
     
 
@@ -14,7 +14,7 @@ def create_video_capture_queue(device, queue_size=30, fps=None):
         while capture.isOpened():
             current_time = time.time()
             ok, frame = capture.read()
-            if not ok:
+            if not ok and not quiet:
                 raise RuntimeError("failed to capture frame")
             elif fps is None: 
                 frames.put(frame)
