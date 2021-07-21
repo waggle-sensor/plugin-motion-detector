@@ -11,7 +11,8 @@ RUN pip3 install --upgrade pip setuptools wheel
 RUN pip3 install --no-cache-dir -r /app/requirements.txt
 
 # Copy plugin app content:
-COPY main.py detector.py capture.py object_tracker.py /app/
+COPY main.py detector.py capture.py object_tracker.py test.py /app/
+COPY test /app/test/
 
 # Set SAGE environment variables:
 

@@ -59,7 +59,8 @@ def main():
             frame = frames.get(timeout=10.0)
             tod.update_tracked_objects(frame)
 
-            if (now := time.time()) >= next_publish:
+            now = time.time()
+            if now >= next_publish:
                 # publish tracked object data:
                 objs, objs_meta = tod.get_tracked_objects_info(with_meta=True)
                 if objs:

@@ -1,4 +1,4 @@
-ame: "motion-detector"
+name: "motion-detector"
 description: "A general-purpose motion detection system that locates and tracks moving objects."
 version: "0.1.0"
 source:
