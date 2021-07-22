@@ -10,4 +10,5 @@ source:
   dockerfile: Dockerfile
   branch: main
 testing:
+  mask_entrypoint: true
   command: ["echo","test is successful"]
