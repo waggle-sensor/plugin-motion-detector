@@ -11,4 +11,4 @@ source:
   branch: main
 testing:
   mask_entrypoint: true
-  command: ["echo","test is successful"]
+  command: ["python3","-m", "unittest"]
