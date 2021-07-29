@@ -64,8 +64,8 @@ def main():
                 # publish tracked object data:
                 objs, objs_meta = tod.get_tracked_objects_info(with_meta=True)
                 if objs:
-                    print(objs)
-                    #plugin.publish('motion-detector',objs, meta=objs_meta)
+                    #print(objs)
+                    plugin.publish('motion-detector',objs, meta=objs_meta)
                     next_publish = now + publish_interval     
 
             if args.display:
