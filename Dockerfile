@@ -14,16 +14,6 @@ RUN pip3 install --no-cache-dir -r /app/requirements.txt
 COPY main.py detector.py capture.py object_tracker.py test.py /app/
 COPY test /app/test/
 
-# Set SAGE environment variables:
-
-ARG SAGE_STORE_URL="HOST"
-ARG SAGE_USER_TOKEN="-10"
-ARG BUCKET_ID_MODEL="BUCKET_ID_MODEL"
-
-ENV SAGE_STORE_URL=${SAGE_STORE_URL} \
-    SAGE_USER_TOKEN=${SAGE_USER_TOKEN} \
-    BUCKET_ID_MODEL=${BUCKET_ID_MODEL}
-
 # Establish entrypoint:
 # ----- Arguments -----
 #   input:      video source device
@@ -34,8 +24,7 @@ ENV SAGE_STORE_URL=${SAGE_STORE_URL} \
 #                   2. "dense_optflow"  (dense optical flow; recommended)
 #                   3. "yolo"           (small pre-trained YOLO model)
 WORKDIR /app
-ENTRYPOINT ["python3",    "/app/main.py", \
-            "--input",    "/dev/video0", \
-            "--fps",      "20", \
-            "--interval", "1", \
-            "--detector", "dense_optflow"]
+ENTRYPOINT ["python3", "/app/main.py", \
+    "--fps",      "20", \
+    "--interval", "10", \
+    "--detector", "dense_optflow"]
