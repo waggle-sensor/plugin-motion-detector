@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
-import tensorflow.compat.v1 as tf
-import tensornets as nets
+# import tensorflow.compat.v1 as tf
+# import tensornets as nets
 
 # Detectors should satisfy the interface:
 #   detector.apply(frame) -> object list [ returns list of moving objects      ]
@@ -113,53 +113,50 @@ def get_bounding_boxes_from_thresh(thresh, min_area=2000, max_n_objs=5):
     cnts = cnts[:min(max_n_objs, len(cnts))]
     return cnts
 
+# class YOLODetector:
 
+#     # These map the output type -> 
+#     VOC_LABELS = {
+#         1:'aeroplane',
+#         2:'bicycle',
+#         3:'bird',
+#         4:'boat',
+#         5:'bottle',
+#         6:'bus',
+#         7:'car',
+#         8:'cat',
+#         9:'chair',
+#         10:'cow',
+#         11:'diningtable',
+#         12:'dog',
+#         13:'horse',
+#         14:'motorbike',
+#         15:'person',
+#         16:'pottedplant',
+#         17:'sheep',
+#         18:'sofa',
+#         19:'train',
+#         20:'tvmonitor'
+#     }
 
+#     def __init__(self):
+#         tf.compat.v1.disable_eager_execution()
+#         self.inputs = tf.placeholder(tf.float32, [None, 416, 416, 3])
+#         self.model = nets.TinyYOLOv2VOC(self.inputs) 
+#         self.sess = tf.Session()
+#         self.sess.run(self.model.pretrained())
 
-class YOLODetector:
-
-    # These map the output type -> 
-    VOC_LABELS = {
-        1:'aeroplane',
-        2:'bicycle',
-        3:'bird',
-        4:'boat',
-        5:'bottle',
-        6:'bus',
-        7:'car',
-        8:'cat',
-        9:'chair',
-        10:'cow',
-        11:'diningtable',
-        12:'dog',
-        13:'horse',
-        14:'motorbike',
-        15:'person',
-        16:'pottedplant',
-        17:'sheep',
-        18:'sofa',
-        19:'train',
-        20:'tvmonitor'
-    }
-
-    def __init__(self):
-        tf.compat.v1.disable_eager_execution()
-        self.inputs = tf.placeholder(tf.float32, [None, 416, 416, 3])
-        self.model = nets.TinyYOLOv2VOC(self.inputs) 
-        self.sess = tf.Session()
-        self.sess.run(self.model.pretrained())
-
-    def apply(self, frame):
-        frame = cv2.resize(frame, (416,416))
-        frame_in = np.array(frame).reshape(-1,416,416,3)
-        preds = self.sess.run(self.model, {self.inputs: self.model.preprocess(frame_in)})
-        boxes = self.model.get_boxes(preds, frame_in.shape[1:3])
-        cnts = []
-        for i, box_type in enumerate(boxes):
-            for r in box_type:
-                print(f'{YOLODetector.VOC_LABELS[i+1]} at ({(r[0]+r[2])/2},{(r[1]+r[3])/2})')
-                cnts.append((int(r[0]),int(r[1]),int(r[2]),int(r[3])))
-        return cnts  
+#     def apply(self, frame):
+#         frame = cv2.resize(frame, (416,416))
+#         frame_in = np.array(frame).reshape(-1,416,416,3)
+#         preds = self.sess.run(self.model, {self.inputs: self.model.preprocess(frame_in)})
+#         boxes = self.model.get_boxes(preds, frame_in.shape[1:3])
+#         cnts = []
+#         for i, box_type in enumerate(boxes):
+#             for r in box_type:
+#                 print(f'{YOLODetector.VOC_LABELS[i+1]} at ({(r[0]+r[2])/2},{(r[1]+r[3])/2})')
+#                 cnts.append((int(r[0]),int(r[1]),int(r[2]),int(r[3])))
+#         return cnts  
         
 
 # TODO can we bootstrap / parameter search for a lightweight motion tracker
