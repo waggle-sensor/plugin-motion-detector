@@ -2,12 +2,10 @@ from unittest import main, TestCase
 import cv2
 import time
 
-from capture import create_video_capture_queue
-from detector import EMAObjectDetector, BGSubObjectDetector,DenseOpticalFlowDetector, YOLODetector
+from detector import BGSubObjectDetector,DenseOpticalFlowDetector
+# from detector import YOLODetector
 from object_tracker import TrackedObjectDatabase, EMATracker
-
-# This is a sequence of images displaying a bouncing ball:
-TEST_OBJECT_FRAMES = './test/ball-%2d.png' 
+from waggle.data.vision import ImageFolder
 
 # These are the locations of the bouncing ball center:
 TEST_OBJECT_LOCATIONS= [
@@ -40,9 +38,9 @@ def _pt_within_rect(pt, rect, margin=50):
 
 def _test_detector(detector):
     """Tests a detector on an animated image"""
-    frames = create_video_capture_queue(TEST_OBJECT_FRAMES, quiet=True)
-    for i, pt in enumerate(TEST_OBJECT_LOCATIONS): 
-        frame = frames.get(timeout=1.0)
+    dataset = ImageFolder("test")
+    for i, (sample, pt) in enumerate(zip(dataset, TEST_OBJECT_LOCATIONS)):
+        frame = sample.data
         rects = detector.apply(frame)
         if i > 1:
             assert len(rects) == 1, \
@@ -56,9 +54,9 @@ def _test_detector(detector):
 def _test_tod(detector, tracker):
     """Tests a tracked object database on an animated image"""
     tod = TrackedObjectDatabase(detector, tracker)
-    frames = create_video_capture_queue(TEST_OBJECT_FRAMES, quiet=True)
-    for i, pt in enumerate(TEST_OBJECT_LOCATIONS): 
-        frame = frames.get(timeout=1.0)
+    dataset = ImageFolder("test")
+    for i, sample in enumerate(dataset):
+        frame = sample.data
         tod.update_tracked_objects(frame)
         objs = tod.get_tracked_objects_info(with_meta=False)
         if i > 1:
@@ -90,15 +88,15 @@ class DenseOpticalFlowDetectorTest(TestCase):
         tracker = EMATracker(weight=1.0, object_ttl=1.0)
         _test_tod(detector, tracker)
 
-class YoloDetectorTest(TestCase):
+# class YoloDetectorTest(TestCase):
 
-    def test_detector(self):
-        pass
+#     def test_detector(self):
+#         pass
 
-    def test_tod(self):
-        detector = YOLODetector()
-        tracker = EMATracker(weight=1.0, object_ttl=1.0)
-        _test_tod(detector, tracker)
+#     def test_tod(self):
+#         detector = YOLODetector()
+#         tracker = EMATracker(weight=1.0, object_ttl=1.0)
+#         _test_tod(detector, tracker)
 
 if __name__ == '__main__':
     main()
