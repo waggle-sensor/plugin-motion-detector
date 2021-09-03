@@ -29,8 +29,8 @@ def main():
     parser = argparse.ArgumentParser(description="This program uses simple motion detection and background subtraction for object detection.")
     parser.add_argument("--debug", action="store_true", help="enable debug logs")
     parser.add_argument("--input", default=0, help="video input source")
-    parser.add_argument("--fps", type=float, default=None, help="frames per second of input source")
-    parser.add_argument("--detector", default="bg_subtraction", help= \
+    parser.add_argument("--fps", type=float, default=20, help="frames per second of input source")
+    parser.add_argument("--detector", default="dense_optflow", help= \
     """
     The motion detector to use. In order from least to most computationally intensive, the options are:
         (1) bg_subtraction
