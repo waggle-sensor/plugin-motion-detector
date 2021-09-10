@@ -1,4 +1,0 @@
-vision
-motion detector
-optical flow farneback
-yolo
