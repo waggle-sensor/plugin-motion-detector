@@ -1,6 +1,6 @@
 name: "motion-detector"
 description: "A general-purpose motion detection system that locates and tracks moving objects."
-version: "0.1.0"
+version: "0.2.0"
 authors: "Colin Burdine <colin_burdine1@baylor.edu>, Sean Shahkarami <sshahkarami@anl.gov>"
 collaborators: "Nicola Ferrier <nferrier@anl.gov>"
 funding: "This project was funded by the DOE Department of Energy SULI Program."
@@ -15,4 +15,4 @@ source:
   branch: main
 testing:
   mask_entrypoint: true
-  command: ["python3","-m", "unittest"]
+  command: ["python3", "-m", "unittest"]
