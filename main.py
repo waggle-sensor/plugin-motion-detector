@@ -62,15 +62,17 @@ def main():
         tod.update_tracked_objects(frame)
 
         now = time.time()
-        if now >= next_publish:
-            # publish tracked object data:
-            objs, objs_meta = tod.get_tracked_objects_info(with_meta=True)
+        if now < next_publish:
+            continue
 
-            value = int(len(objs) > 0)
-            plugin.publish('vision.motion_detected', value)
-            logging.info('detected motion: %s', value)
-            next_publish = now + publish_interval
-            total_published += 1
+        # publish tracked object data:
+        objs, _ = tod.get_tracked_objects_info(with_meta=True)
+
+        value = int(len(objs) > 0)
+        plugin.publish('vision.motion_detected', value)
+        logging.info('detected motion: %s', value)
+        next_publish = now + publish_interval
+        total_published += 1
 
 if __name__ == "__main__":
     main()
