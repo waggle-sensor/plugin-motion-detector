@@ -29,7 +29,7 @@ def main():
     parser = argparse.ArgumentParser(description="This program uses simple motion detection and background subtraction for object detection.")
     parser.add_argument("--debug", action="store_true", help="enable debug logs")
     parser.add_argument("--input", default=0, help="video input source")
-    parser.add_argument("--fps", type=float, default=20, help="frames per second of input source")
+    # parser.add_argument("--fps", type=float, default=20, help="frames per second of input source")
     parser.add_argument("--detector", default="dense_optflow", help= \
     """
     The motion detector to use. In order from least to most computationally intensive, the options are:
@@ -37,9 +37,8 @@ def main():
         (2) dense_optflow
         (3) yolo
     """)
-    parser.add_argument("--interval", type=float, default=10.0, help="interval between data publishes (in seconds)")
-    parser.add_argument("--display", action="store_true", help="display object detection preview (for debugging)")
-    parser.add_argument("--filtered", action="store_true", help="display filtered input (for debugging)")
+    parser.add_argument("--samples", type=int, default=1, help="number of samples to publish")
+    parser.add_argument("--interval", type=float, default=5.0, help="interval between data publishes (in seconds)")
     args = parser.parse_args()
 
     plugin.init()
@@ -52,33 +51,26 @@ def main():
     camera = Camera(args.input, format=BGR)
     tod = TrackedObjectDatabase(load_detector(args.detector), EMATracker(object_ttl=1.0))
     publish_interval = args.interval
-    next_publish = time.time()
-    
-    try:
-        for sample in camera.stream():
-            frame = sample.data
-            tod.update_tracked_objects(frame)
+    next_publish = time.time() + publish_interval
+    total_published = 0
 
-            now = time.time()
-            if now >= next_publish:
-                # publish tracked object data:
-                objs, objs_meta = tod.get_tracked_objects_info(with_meta=True)
+    for sample in camera.stream():
+        if args.samples > 0 and total_published >= args.samples:
+            break
 
-                value = int(len(objs) > 0)
-                plugin.publish('vision.motion_detected', value)
-                logging.info('detected motion: %s', value)
-                next_publish = now + publish_interval
+        frame = sample.data
+        tod.update_tracked_objects(frame)
 
-            if args.display:
-                if args.filtered and (tod.detector.filtered_frame is not None):
-                    frame = tod.detector.filtered_frame
-                tod.show_tracked_objects(frame)
-                cv2.imshow("Preview (press \'q\' to quit)", frame)
-                keyboard = cv2.waitKey(1) & 0xFF
-                if keyboard == ord("q") or keyboard == 27:
-                    break
-    finally:
-        cv2.destroyAllWindows()
+        now = time.time()
+        if now >= next_publish:
+            # publish tracked object data:
+            objs, objs_meta = tod.get_tracked_objects_info(with_meta=True)
+
+            value = int(len(objs) > 0)
+            plugin.publish('vision.motion_detected', value)
+            logging.info('detected motion: %s', value)
+            next_publish = now + publish_interval
+            total_published += 1
 
 if __name__ == "__main__":
     main()
