@@ -5,6 +5,7 @@ import logging
 import cv2
 from contextlib import contextmanager
 
+from pathlib import Path
 import waggle.plugin as plugin
 from waggle.data.vision import Camera, BGR
 
@@ -61,7 +62,7 @@ def main():
     total_published = 0
 
     with log_time("setup"):
-        camera = Camera(args.input, format=BGR)
+        camera = Camera(Path(args.input), format=BGR)
         tod = TrackedObjectDatabase(load_detector(args.detector), EMATracker(object_ttl=1.0))
 
     for sample in camera.stream():
@@ -79,12 +80,21 @@ def main():
         # publish tracked object data:
         with log_time("publish"):
             objs, _ = tod.get_tracked_objects_info(with_meta=True)
+            print(objs)
             value = int(len(objs) > 0)
             plugin.publish('vision.motion_detected', value)
-        
+            print('vision.motion_detected', value)
+
         logging.info('detected motion: %s', value)
         next_publish = now + publish_interval
         total_published += 1
+
+        if tod.detector.filtered_frame is not None:
+            frame = tod.detector.filtered_frame
+        tod.show_tracked_objects(frame)
+        cv2.imwrite('result.jpg', frame)
+        plugin.upload_file('result.jpg')
+        print("A result is published")
 
 if __name__ == "__main__":
     main()
