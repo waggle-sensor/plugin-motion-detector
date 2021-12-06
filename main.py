@@ -62,7 +62,7 @@ def main():
     total_published = 0
 
     with log_time("setup"):
-        camera = Camera(Path(args.input), format=BGR)
+        camera = Camera(args.input, format=BGR)
         tod = TrackedObjectDatabase(load_detector(args.detector), EMATracker(object_ttl=1.0))
 
     for sample in camera.stream():
