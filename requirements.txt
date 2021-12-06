@@ -1,2 +1,1 @@
-waggle[vision] @ https://github.com/waggle-sensor/pywaggle/releases/download/0.46.2/waggle-0.46.2-py3-none-any.whl
-# tensornets
+waggle[vision] @ https://github.com/waggle-sensor/pywaggle/releases/download/0.49.0/waggle-0.49.0-py3-none-any.whl
