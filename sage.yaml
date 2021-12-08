@@ -5,7 +5,7 @@ authors: "Colin Burdine <colin_burdine1@baylor.edu>, Sean Shahkarami <sshahkaram
 funding: "NSF 1935984"
 collaborators: "Bhupendra Raut, Dario Dematties Reyes, Joseph Swantek, Neal Conrad, Nicola Ferrier, Pete Beckman, Raj Sankaran, Robert Jackson, Scott Collis, Sean Shahkarami, Seongha Park, Sergey Shemyakin, Wolfgang Gerlach, Yongho kim"
 license: "GNU General Public License v3.0"
-keywords: "vision, motion detector, optical flow farneback, yolo"
+keywords: "computer vision, motion detector, background subtraction, optical flow farneback"
 homepage: "https://github.com/waggle-sensor/plugin-motion-detector/blob/main/README.md"
 source:
   architectures:
