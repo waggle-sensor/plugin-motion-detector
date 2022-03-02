@@ -22,6 +22,25 @@ Model loading time:
 # Ontology
 The code publishes measurements with topic ‘vision.motion_detected’
 
+# Inference from Sage codes
+To query the output from the plugin, you can do with python library 'sage_data_client':
+```
+import sage_data_client
+
+# query and load data into pandas data frame
+df = sage_data_client.query(
+    start="-1h",
+    filter={
+        "name": "vision.motion_detected",
+    }
+)
+
+# print results in data frame
+print(df)
+```
+For more information, please see [Access and use data documentation](https://docs.sagecontinuum.org/docs/tutorials/accessing-data) and [sage_data_client](https://pypi.org/project/sage-data-client/).
+
+
 # References
 [1] [Zivkovic, Zoran, and Ferdinand Van Der Heijden. "Efficient adaptive density estimation per image pixel for the task of background subtraction." Pattern recognition letters 27, no. 7 (2006): 773-780.](https://www.researchgate.net/publication/225138825_Two-Frame_Motion_Estimation_Based_on_Polynomial_Expansion)  
 [2] [Farnebäck, Gunnar. "Two-frame motion estimation based on polynomial expansion." In Scandinavian conference on Image analysis, pp. 363-370. Springer, Berlin, Heidelberg, 2003.](https://www.researchgate.net/publication/225138825_Two-Frame_Motion_Estimation_Based_on_Polynomial_Expansion)
