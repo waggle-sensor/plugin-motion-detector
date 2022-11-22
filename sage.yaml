@@ -1,6 +1,6 @@
 name: "motion-detector"
 description: "A general-purpose motion detection system that locates and tracks moving objects."
-version: "0.2.0"
+version: "0.3.0"
 authors: "Colin Burdine <colin_burdine1@baylor.edu>, Sean Shahkarami <sshahkarami@anl.gov>"
 funding: "NSF 1935984"
 collaborators: "Bhupendra Raut, Dario Dematties Reyes, Joseph Swantek, Neal Conrad, Nicola Ferrier, Pete Beckman, Raj Sankaran, Robert Jackson, Scott Collis, Sean Shahkarami, Seongha Park, Sergey Shemyakin, Wolfgang Gerlach, Yongho kim"

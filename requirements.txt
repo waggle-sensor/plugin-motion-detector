@@ -1,1 +1,1 @@
-waggle[vision] @ https://github.com/waggle-sensor/pywaggle/releases/download/0.49.0/waggle-0.49.0-py3-none-any.whl
+pywaggle[vision]==0.55.*
