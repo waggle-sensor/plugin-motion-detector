@@ -19,7 +19,7 @@ def log_time(name):
     start = time.perf_counter()
     yield
     duration = time.perf_counter() - start
-    logging.info("section %s took %fs", name, duration)
+    logging.info(f'section {name} took {duration}s')
 
 
 def load_detector(name):
@@ -53,7 +53,7 @@ def main():
     logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,
                         format="%(asctime)s %(message)s",
                         datefmt="%Y/%m/%d %H:%M:%S")
-    logging.info("opencv version %s", cv2.__version__)
+    logging.info(f'opencv version {cv2.__version__}')
 
     publish_interval = args.interval
     next_publish = time.time() + publish_interval
@@ -81,9 +81,9 @@ def main():
                 logging.info(objs)
                 value = int(len(objs) > 0)
                 plugin.publish('vision.motion_detected', value)
-                logging.info('vision.motion_detected', value)
+                logging.info(f'vision.motion_detected: {value}')
 
-            logging.info('detected motion: %s', value)
+            logging.info(f'detected motion: {value}')
             next_publish = now + publish_interval
             total_published += 1
 
