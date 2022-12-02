@@ -8,29 +8,14 @@ This is a general purpose motion detection plugin that incorporates various onli
 * Farnebäck's Dense Optical Flow Method (recommended detector):
 	* [[reference paper]](https://www.researchgate.net/publication/225138825_Two-Frame_Motion_Estimation_Based_on_Polynomial_Expansion)
 
-* TinyYOLOv2 (trained on the [PASCAL VOC dataset](https://www.kaggle.com/gopalbhattrai/pascal-voc-2012-dataset))
-	* [[reference paper]](https://ieeexplore.ieee.org/document/7780460) 
-
 ### Object Trackers:
 * Naive Exponential Moving Average Tracker
-
-## Developer Notes
-This plugin is still in development, and there are several features that would be great to add in the future. 
-Some of these future changes may include:
-
-* Replace tensornets TinyYOLO model with custom trained Tensorflow lite model
-
-* Implement non-naive lightweight tracking models (e.g. [MOSSE filters](https://www.cs.colostate.edu/~draper/papers/bolme_cvpr10.pdf))
-
-* Reformatting project structure (to better align with existing plugins)
 
 ## Dependencies
 
 To run/test this plugin in a local Python3 environment, the required dependencies are:
 ```
 numpy
-tensorflow 
-tensornets
 opencv-contrib-python
 ```
 
